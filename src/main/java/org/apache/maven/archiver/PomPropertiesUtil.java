@@ -132,6 +132,15 @@ public class PomPropertiesUtil
     public void applyPomProperties( MavenProject project, Archiver archiver, File pomPropertiesFile )
         throws ArchiverException, IOException
     {
+        applyPomProperties ( project, archiver, pomPropertiesFile, pomPropertiesFile );
+    }
+
+    /**
+     * Apply project properties to user-specified pom.properties, writing to outputFile.
+     */
+    public void applyPomProperties( MavenProject project, Archiver archiver, File pomPropertiesFile, File outputFile )
+            throws ArchiverException, IOException
+    {
         final Properties p = new Properties();
 
         final FileInputStream stream = new FileInputStream(pomPropertiesFile.getCanonicalPath());
@@ -148,9 +157,9 @@ public class PomPropertiesUtil
         {
             applyProperties( project, p );
 
-            createPropertyFile( p, pomPropertiesFile, true ); // overwrite
+            createPropertyFile( p, outputFile, true ); // overwrite
 
-            archiver.addFile( pomPropertiesFile, "META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() +
+            archiver.addFile( outputFile, "META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() +
                     "/pom.properties" );
         }
     }

@@ -547,7 +547,17 @@ public class MavenArchiver
                 }
                 else
                 {
-                    new PomPropertiesUtil().applyPomProperties( workingProject, archiver, pomPropertiesFile );
+                    final File target = new File(
+                            new File( workingProject.getBuild().getDirectory(), "maven-archiver" ), "pom.properties" );
+                    if ( target.exists () )
+                    {
+                        // overwrite specified file anyway
+                        new PomPropertiesUtil().applyPomProperties( workingProject, archiver, pomPropertiesFile );
+                    }
+                    else
+                    {
+                        new PomPropertiesUtil().applyPomProperties( workingProject, archiver, pomPropertiesFile, target );
+                    }
                 }
             }
             if ( pomPropertiesFile == null )
