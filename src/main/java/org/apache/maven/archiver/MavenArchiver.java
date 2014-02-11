@@ -530,12 +530,25 @@ public class MavenArchiver
             // ----------------------------------------------------------------------
 
             File pomPropertiesFile = archiveConfiguration.getPomPropertiesFile();
+            if ( pomPropertiesFile != null )
+            {
+                if ( !pomPropertiesFile.exists() )
+                {
+                    // TODO Should issue a warning here, but how do we get a logger?
+                    pomPropertiesFile = null; // just generate the file instead
+                }
+                else
+                {
+                    // assume file has already been filtered
+                    archiver.addFile( pomPropertiesFile, "META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties" );
+                }
+            }
             if ( pomPropertiesFile == null )
             {
                 File dir = new File( workingProject.getBuild().getDirectory(), "maven-archiver" );
                 pomPropertiesFile = new File( dir, "pom.properties" );
+                new PomPropertiesUtil().createPomProperties( workingProject, archiver, pomPropertiesFile, forced );
             }
-            new PomPropertiesUtil().createPomProperties( workingProject, archiver, pomPropertiesFile, forced );
         }
 
         // ----------------------------------------------------------------------

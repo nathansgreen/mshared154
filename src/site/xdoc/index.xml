@@ -162,9 +162,15 @@
           <tr>
             <td>pomPropertiesFile</td>
             <td>
-              Use this to override the auto generated
+              Use this to override the auto-generated
               <a href="#pom-properties-content">pom.properties</a> file
               (only if <code>addMavenDescriptor</code> is set to <code>true</code>)
+              <p>If the file specified by this setting exists, it will be used as-is. It
+                is assumed that the file has already been filtered at this point in the
+                build lifecycle.
+              </p>
+              If the file does not exist, the auto-generated <code>pom.properties</code>
+              file will be created instead.
             </td>
             <td>File</td>
             <td>2.3</td>
