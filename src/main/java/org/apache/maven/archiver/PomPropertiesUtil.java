@@ -95,6 +95,13 @@ public class PomPropertiesUtil
         }
     }
 
+    private void applyProperties( MavenProject project, Properties p )
+    {
+        p.setProperty( "groupId", project.getGroupId() );
+        p.setProperty( "artifactId", project.getArtifactId() );
+        p.setProperty( "version", project.getVersion() );
+    }
+
     /**
      * Creates the pom.properties file.
      */
@@ -102,19 +109,39 @@ public class PomPropertiesUtil
                                      boolean forceCreation )
         throws ArchiverException, IOException
     {
-        final String artifactId = project.getArtifactId();
-        final String groupId = project.getGroupId();
+        final Properties p = new Properties();
 
-        Properties p = new Properties();
-
-        p.setProperty( "groupId", project.getGroupId() );
-
-        p.setProperty( "artifactId", project.getArtifactId() );
-
-        p.setProperty( "version", project.getVersion() );
+        applyProperties( project, p );
 
         createPropertyFile( p, pomPropertiesFile, forceCreation );
 
-        archiver.addFile( pomPropertiesFile, "META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties" );
+        archiver.addFile( pomPropertiesFile, "META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() +
+                "/pom.properties" );
+    }
+
+    /**
+     * Apply project properties to user-specified pom.properties.
+     */
+    public void applyPomProperties( MavenProject project, Archiver archiver, File pomPropertiesFile )
+        throws ArchiverException, IOException
+    {
+        final Properties p = new Properties();
+
+        final FileInputStream stream = new FileInputStream(pomPropertiesFile.getCanonicalPath());
+        try
+        {
+            p.load( stream );
+        }
+        finally
+        {
+            IOUtil.close( stream );
+        }
+
+        applyProperties( project, p );
+
+        createPropertyFile( p, pomPropertiesFile, true ); // overwrite
+
+        archiver.addFile( pomPropertiesFile, "META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() +
+                "/pom.properties" );
     }
 }

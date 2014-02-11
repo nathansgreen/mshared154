@@ -20,6 +20,7 @@ package org.apache.maven.archiver;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -530,12 +531,31 @@ public class MavenArchiver
             // ----------------------------------------------------------------------
 
             File pomPropertiesFile = archiveConfiguration.getPomPropertiesFile();
+            if ( pomPropertiesFile != null )
+            {
+                if ("".equals(pomPropertiesFile.getPath().trim()))
+                {
+                    pomPropertiesFile = null; // just generate the file instead
+                }
+                else if ( !pomPropertiesFile.exists() )
+                {
+                    throw new FileNotFoundException(pomPropertiesFile.getPath());
+                }
+                else if ( !pomPropertiesFile.isFile())
+                {
+                    throw new IOException("Not a file: " + pomPropertiesFile.getPath());
+                }
+                else
+                {
+                    new PomPropertiesUtil().applyPomProperties( workingProject, archiver, pomPropertiesFile );
+                }
+            }
             if ( pomPropertiesFile == null )
             {
                 File dir = new File( workingProject.getBuild().getDirectory(), "maven-archiver" );
                 pomPropertiesFile = new File( dir, "pom.properties" );
+                new PomPropertiesUtil().createPomProperties( workingProject, archiver, pomPropertiesFile, forced );
             }
-            new PomPropertiesUtil().createPomProperties( workingProject, archiver, pomPropertiesFile, forced );
         }
 
         // ----------------------------------------------------------------------
