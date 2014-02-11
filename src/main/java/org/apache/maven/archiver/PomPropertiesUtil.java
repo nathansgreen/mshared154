@@ -102,6 +102,13 @@ public class PomPropertiesUtil
         p.setProperty( "version", project.getVersion() );
     }
 
+    private boolean sameProperties( MavenProject project, Properties p )
+    {
+        return project.getGroupId().equals( p.getProperty( "groupId" ) ) &&
+               project.getArtifactId().equals( p.getProperty( "artifactId" ) ) &&
+               project.getVersion().equals( p.getProperty( "version" ) );
+    }
+
     /**
      * Creates the pom.properties file.
      */
@@ -137,11 +144,14 @@ public class PomPropertiesUtil
             IOUtil.close( stream );
         }
 
-        applyProperties( project, p );
+        if ( !sameProperties( project, p ))
+        {
+            applyProperties( project, p );
 
-        createPropertyFile( p, pomPropertiesFile, true ); // overwrite
+            createPropertyFile( p, pomPropertiesFile, true ); // overwrite
 
-        archiver.addFile( pomPropertiesFile, "META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() +
-                "/pom.properties" );
+            archiver.addFile( pomPropertiesFile, "META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() +
+                    "/pom.properties" );
+        }
     }
 }

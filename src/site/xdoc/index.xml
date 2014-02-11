@@ -169,7 +169,8 @@
                 If the file specified by this setting exists, it will be loaded as a
                 properties file, values for <code>groupId</code>, <code>artifactId</code>,
                 and <code>version</code> will be added from the project, then the file
-                will be overwritten.
+                will be overwritten. If the values are already present and are identical
+                to those of the project, the file will not be overwritten.
               </p>
               If the file does not exist or cannot be read as a properties file, the
               build will fail.
